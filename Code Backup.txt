@@ -1,0 +1,185 @@
+map=
+"9  8  88  8   8  88  8    8  88  8   8  88  8  9\n"+
+"9 8  8  8  8 8  8  8  8  8  8  8  8 8  8  8  8 9\n"+
+"9   8    8  8  8    8  88  8    8  8  8    8   9\n"+
+"9  8  88  8   8  88  8    8  88  8   8  88  8  9\n"+
+"9 8  8  8  8 8  8  8  8  8  8  8  8 8  8  8  8 9\n"+
+"9                                              9\n"+
+"999999999999999999999999999999999999999999999999\n"+
+"999999999999999999999999999999999999999999999999\n"+
+"9    9 9            999999999999999     99999999\n"+
+"9    9 9            9999999999999         999999\n"+
+"9    9 9            999999999999           99999\n"+
+"9    9 9            99999999999             9999\n"+
+"9    9 9            999    999               999\n"+
+"9    9 9            999    99                 99\n"+
+"9    999            9 9    99                 99\n"+
+"9    999            9 9    9                   9\n"+
+"99999999            9 9    9                   9\n"+
+"99999999            9 9    9                   9\n"+
+"99999999            9 9    9                   9\n"+
+"99999999            9 9    9                   9\n"+
+"99999999999999999999999999999                 99\n"+
+"99999999999999999999999999999                 99\n"+
+"99999999     99999999      999               999\n"+
+"999999         999999      9999             9999\n"+
+"99999           99999      99999           99999\n"+
+"9999             9999      999999         999999\n"+
+"999               999      99999999     99999999\n"+
+"99                 99      999999999999999999999\n"+
+"99                 99999999999999999999999999999\n"+
+"9                   9    9 9            99999999\n"+
+"9                   9    9 9            99999999\n"+
+"9                   9    9 9            99999999\n"+
+"9                   9    9 9            99999999\n"+
+"9                   9    9 9            999    9\n"+
+"99                 99    9 9            999    9\n"+
+"99                 99    999            9 9    9\n"+
+"999               999    999            9 9    9\n"+
+"9999             99999999999            9 9    9\n"+
+"99999           999999999999            9 9    9\n"+
+"999999         9999999999999            9 9    9\n"+
+"99999999     999999999999999            9 9    9\n"+
+"999999999999999999999999999999999999999999999999\n"+
+"9                                              9\n"+
+"9 8  8  8  8 8  8  8  8  8  8  8  8 8  8  8  8 9\n"+
+"9  8  88  8   8  88  8    8  88  8   8  88  8  9\n"+
+"9   8    8  8  8    8  88  8    8  8  8    8   9\n"+
+"9 8  8  8  8 8  8  8  8  8  8  8  8 8  8  8  8 9\n"+
+"9  8  88  8   8  88  8    8  88  8   8  88  8  9\n"+
+"9  8  88  8   8  88  8    8  88  8   8  88  8  9"
+;
+
+const VOCABULARY = [
+    // 1
+    {text: "You",       icon: "\u004e", key: "O"},
+    {text: "Me",        icon: "\u004f", key: "E"},
+    {text: "Hmm",       icon: "\u004b", key: "Q"},
+    {text: "Yes",       icon: "\u004c", key: "Y"},
+    // 2
+    {text: "No",        icon: "\u004d", key: "N"},
+    {text: "Hello",     icon: "\u0045", key: "H"},
+    {text: "Sorry",     icon: "\u00a1", key: "S"},
+    {text: "Thanks",    icon: "\u0041", key: "A"},
+];
+
+                                                                                //custom objects
+var BSquares = {
+  id: "BSquares",
+  obj: "https://raw.githubusercontent.com/Eman-Bman/starblast-chess-dueling/refs/heads/main/squares.obj",
+  emissiveColor: 0x553311
+};
+
+var WSquares = {
+  id: "WSquares",
+  obj: "https://raw.githubusercontent.com/Eman-Bman/starblast-chess-dueling/refs/heads/main/squares.obj",
+  emissiveColor: 0xFFF0F0
+};
+
+var Entry = {
+  id: "entry",
+  obj: "https://raw.githubusercontent.com/Eman-Bman/starblast-aim-training/refs/heads/main/entry.obj",
+  emissiveColor: 0xFFF0F0
+};
+
+var blocked = {
+  id: "blocked",
+  obj: "https://raw.githubusercontent.com/Eman-Bman/starblast-aim-training/refs/heads/main/blocked.obj",
+  emissiveColor: 0xF0F0FF
+};
+                                                                                //custom functions
+var customObj = function()                                                      //place custom objects
+{
+  game.removeObject();
+  
+  game.setObject({
+  id: "entry1",
+  type: Entry,
+  position: {x:-20,y:20,z:0},
+  rotation: {x:0,y:0,z:0},
+  scale: {x:1,y:1,z:1}
+  }) ;
+  
+  game.setObject({
+  id: "entry2",
+  type: Entry,
+  position: {x:20,y:-20,z:0},
+  rotation: {x:0,y:0,z:0},
+  scale: {x:1,y:1,z:1}
+  }) ;
+  
+  game.setObject({
+  id: "darkboard1",
+  type: BSquares,
+  position: {x:-100,y:110,z:0},
+  rotation: {x:0,y:0,z:0},
+  scale: {x:1,y:1,z:1}
+  }) ;
+  
+  game.setObject({
+  id: "lightboard1",
+  type: WSquares,
+  position: {x:-100,y:110,z:0},
+  rotation: {x:0,y:0,z:(3.14/2)},
+  scale: {x:1,y:1,z:1}
+  }) ;
+  
+  game.setObject({
+  id: "darkboard2",
+  type: BSquares,
+  position: {x:100,y:-100,z:0},
+  rotation: {x:0,y:0,z:0},
+  scale: {x:1,y:1,z:1}
+  }) ;
+  
+  game.setObject({
+  id: "lightboard2",
+  type: WSquares,
+  position: {x:100,y:-100,z:0},
+  rotation: {x:0,y:0,z:(3.14/2)},
+  scale: {x:1,y:1,z:1}
+  }) ;
+};
+
+this.options = {                                                                //game start options
+  soundtrack: "argon.mp3",
+  root_mode: "",
+  map_name: "Chess V0.1",
+  custom_map: map,
+  vocabulary: VOCABULARY,
+  radar_zoom: 1,
+  weapons_store: false,
+  asteroids_strength: 0.01,
+  starting_ship:800,
+  map_size: 48
+};
+
+this.tick = function(game) {
+                                                                                //single time events:
+  if (game.step==60)                                                            //set intial objects
+  {
+    customObj();
+  }
+}
+
+this.event = function(event,game) {
+  let ship = event.ship;
+  let killer = event.killer;
+  let ast = event.asteroid;
+  switch (event.name){
+    // case "ui_component_clicked":
+    //   var component = event.id ;
+    //   if (component == "Regen")
+    //   {
+    //     Regen(ship);
+    //   }
+    //   break ;
+    case "ship_spawned":
+      echo("new spawn");
+      ship.set({x:0,y:0,type:605, stats:88888888, crystals:720, shield: 1000});
+      break ;
+    case "ship_destroyed":
+      echo("new death");
+      break;
+  }
+} ;
