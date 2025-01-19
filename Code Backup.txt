@@ -3,13 +3,22 @@ let board2count=0;
 let board1W=[];
 let board1B=[];
 let turn1=1;
+let turn2=1;
 let select1=-1;
+let select2=-1;
 let moves1=[];
+let moves2=[];
 let move1=-1;
+let move2=-1;
 let players1=[];
+let players2=[];
 let kinglegal=[-9,-8,-7,-1,1,7,8,9];
 let pieceKey=["R","N","B","Q","K","B","N","R","P","P","P","P","P","P","P","P"];
 let movetest=-1;
+let gemcaps=[20,80,180,320,500,720,980];
+var ships=[];
+var Shadow_X_1_303 = '{"name":"Shadow X-1","level":3,"model":3,"size":0.8,"zoom":0.6,"specs":{"shield":{"capacity":[90,130],"reload":[3,6]},"generator":{"capacity":[50,80],"reload":[12,16]},"ship":{"mass":70,"speed":[120,155],"rotation":[35,60],"acceleration":[130,150]}},"bodies":{"main":{"section_segments":10,"offset":{"x":0,"y":0,"z":0},"position":{"x":[0,0,0,0,0,0,0,0,0,0,0,0],"y":[-100,-98,-95,-70,-40,0,40,70,80,90,100],"z":[0,0,0,0,0,0,0,0,0,0,0]},"width":[0,10,20,30,40,20,20,40,40,40,20,0],"height":[0,4,4,20,20,10,10,15,15,15,10,10],"texture":[12,5,63,4,4,63,4,4,5]},"back":{"section_segments":10,"offset":{"x":0,"y":0,"z":0},"position":{"x":[0,0,0,0,0],"y":[90,95,100,105,90],"z":[0,0,0,0,0]},"width":[10,15,18,19,2],"height":[3,5,7,8,2],"texture":[63],"propeller":true},"cockpit":{"section_segments":8,"offset":{"x":0,"y":-25,"z":15},"position":{"x":[0,0,0,0,0,0],"y":[-45,-40,-25,0,5],"z":[0,0,0,0,0,0]},"width":[0,10,15,13,0],"height":[0,10,15,5,0],"texture":[9]},"laser":{"section_segments":10,"offset":{"x":70,"y":10,"z":-20},"position":{"x":[0,0,0,0,0,0,0,0,0,0],"y":[-20,-15,0,10,20,25,30,40,70,60],"z":[0,0,0,0,0,0,0,0,0,0]},"width":[0,10,15,15,15,10,10,15,5,0],"height":[0,10,15,15,15,10,10,15,5,0],"texture":[3,4,10,3],"propeller":true,"laser":{"damage":[3,4],"rate":6,"type":1,"speed":[180,210],"number":1}}},"wings":{"top":{"offset":{"x":0,"y":50,"z":5},"length":[30],"width":[70,30],"angle":[90],"position":[0,50],"texture":[4],"bump":{"position":10,"size":15}},"side_joins":{"offset":{"x":0,"y":30,"z":-3},"length":[100],"width":[100,40],"angle":[0],"position":[-50,50],"texture":[4],"bump":{"position":10,"size":10}}},"typespec":{"name":"Shadow X-1","level":3,"model":3,"code":303,"specs":{"shield":{"capacity":[90,130],"reload":[3,6]},"generator":{"capacity":[50,80],"reload":[12,16]},"ship":{"mass":70,"speed":[120,155],"rotation":[35,60],"acceleration":[130,150]}},"shape":[1.6,1.582,1.552,1.313,1.138,1.009,0.919,0.75,0.688,0.708,0.733,1.157,1.297,1.359,1.392,1.431,1.696,1.975,2.192,2.258,1.661,1.429,1.58,1.628,1.705,1.835,1.705,1.628,1.58,1.429,1.661,2.258,2.192,1.975,1.696,1.431,1.392,1.359,1.297,1.157,0.733,0.708,0.688,0.75,0.919,1.009,1.138,1.313,1.552,1.582],"lasers":[{"x":1.12,"y":-0.16,"z":-0.32,"angle":0,"damage":[3,4],"rate":6,"type":1,"speed":[180,210],"number":1,"spread":0,"error":0,"recoil":0},{"x":-1.12,"y":-0.16,"z":-0.32,"angle":0,"damage":[3,4],"rate":6,"type":1,"speed":[180,210],"number":1,"spread":0,"error":0,"recoil":0}],"radius":2.258}}';
+ships.push(Shadow_X_1_303);
 map=
 "9  8  88  8   8  88  8    8  88  8   8  88  8  9\n"+
 "9 8  8  8  8 8  8  8  8  8  8  8  8 8  8  8  8 9\n"+
@@ -72,7 +81,14 @@ const VOCABULARY = [
     {text: "No",        icon: "\u004d", key: "N"},
     {text: "Hello",     icon: "\u0045", key: "H"},
     {text: "Sorry",     icon: "\u00a1", key: "S"},
-    {text: "Thanks",    icon: "\u0041", key: "A"},
+    {text: "Thanks",    icon: "\u0041", key: "X"},
+    // 3
+    {text: "Follow",    icon: "\u0050", key: "F"},
+    {text: "Check",     icon: "\u004a", key: "B"},
+    {text: "Checkmate", icon: "\u005b", key: "M"},
+    {text: "Resign",    icon: "\u003b", key: "Z"},
+    // 4
+    {text: "Good Game", icon: "\u00a3", key: "G"}
 ];
                                                                                 //button definitions
 var Select_button = {
@@ -98,6 +114,19 @@ var Move_button = {
     { type:"box",position:[0,0,100,100],fill:"#456",stroke:"#CDE",width:2},
     { type: "text",position:[10,35,80,30],value:"Move",color:"#CDE"},
     { type: "text",position:[20,70,60,20],value:"[T]",color:"#CDE"}
+    ]
+};
+
+var Reset_button = {
+  id: "Reset",
+  position: [68, 1, 3.5, 5.5],
+  clickable: true,
+  shortcut: "",
+  visible: true,
+  components: [
+    { type:"box",position:[0,0,100,100],fill:"#456",stroke:"#CDE",width:2},
+    { type: "text",position:[10,35,80,30],value:"RESET",color:"#CDE"},
+    { type: "text",position:[20,70,60,20],value:"[CLICK]",color:"#CDE"}
     ]
 };
                                                                                 //custom objects
@@ -212,14 +241,15 @@ var BP = {
 var Board1Reset = function() {
   board1B=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15];
   board1W=[56,57,58,59,60,61,62,63,48,49,50,51,52,53,54,55];
+  turn1=1;
   // board1W=[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1];
 };
 
 var Select = function(ship)
 {
-  select1=8*(14-Math.floor(ship.y/10))+(14+Math.floor(ship.x/10));
   if (turn1==1 && ship.name==players1[0])
   {
+    select1=8*(14-Math.floor(ship.y/10))+(14+Math.floor(ship.x/10));
     moves1=[];
     if (board1W.includes(select1) === false) {
       select1=-1;
@@ -357,9 +387,12 @@ var Select = function(ship)
         }
       }
     }
+    echo(moves1)
+    customObj();
   }
-  else if (turn==2 && ship.name==players1[1])
+  else if (turn1==2 && ship.name==players1[1])
   {
+    select1=8*(14-Math.floor(ship.y/10))+(14+Math.floor(ship.x/10));
     moves1=[]
     if (board1B.includes(select1) === false) {
       select1=-1;
@@ -497,9 +530,9 @@ var Select = function(ship)
         }
       }
     }
+    echo(moves1)
+    customObj();
   }
-  echo(moves1)
-  customObj();
 };
 
 var Move = function(ship)
@@ -509,9 +542,12 @@ var Move = function(ship)
     if (moves1.includes(move1)) {
       board1W[board1W.indexOf(select1)]=move1;
       if (board1B.includes(move1)) {
-        board1B.splice(board1B.indexOf(move1),1);
+        board1B[board1B.indexOf(move1)]=-1;
       }
-      turn=2;
+      turn1=2;
+      moves1=[];
+      select1=-1;
+      customObj();
     }
   }
   else if (turn1==2) {
@@ -519,14 +555,14 @@ var Move = function(ship)
     if (moves1.includes(move1)) {
       board1B[board1B.indexOf(select1)]=move1;
       if (board1W.includes(move1)) {
-        board1W.splice(board1W.indexOf(move1),1);
+        board1W[board1W.indexOf(move1)]=-1;
       }
-      turn=1;
+      turn1=1;
+      moves1=[];
+      select1=-1;
+      customObj();
     }
   }
-  moves1=[];
-  select1=-1;
-  customObj();
 };
 
 var customObj = function()                                                      //place custom objects
@@ -732,6 +768,7 @@ this.options = {                                                                
   map_name: "Chess-Dueling V0.1",
   custom_map: map,
   vocabulary: VOCABULARY,
+  ships: ships,
   radar_zoom: 1,
   weapons_store: false,
   asteroids_strength: 0.01,
@@ -754,13 +791,13 @@ this.tick = function(game) {
       {
         if (board1count===0)
         {
-          game.ships[i].set({x:-210,y:95,shield:300,crystals:720});
+          game.ships[i].set({x:-210,y:95,shield:300,crystals:719});
           board1count=1;
           players1.push(game.ships[i].name)
         }
         else if (board1count==1)
         {
-          game.ships[i].set({x:10,y:125,shield:300,crystals:720});
+          game.ships[i].set({x:10,y:125,shield:300,crystals:719});
           board1count=2;
           players1.push(game.ships[i].name)
         }
@@ -778,6 +815,22 @@ this.tick = function(game) {
       {
         ship.custom.Move_button_installed = true;
         ship.setUIComponent(Move_button);
+      }
+      if (!ship.custom.Reset_button_installed && ship.name == "THE SHADOW")
+      {
+        ship.custom.Reset_button_installed = true;
+        ship.setUIComponent(Reset_button);
+      }
+    }
+  }
+  if (game.step%10===0)                           //gem cap
+  {
+    for (var j=0;j<game.ships.length;j++)
+    {
+      // echo(game.ships[j].crystals>=gemcaps[game.ships[j].type.toString().charAt(0)-1])
+      if (game.ships[j].crystals>=gemcaps[game.ships[j].type.toString().charAt(0)-1])
+      {
+        game.ships[j].set({crystals:gemcaps[game.ships[j].type.toString().charAt(0)-1]-1});
       }
     }
   }
@@ -798,10 +851,13 @@ this.event = function(event,game) {
       {
         Move(ship);
       }
+      if (component = "Reset") {
+        Board1Reset();
+      }
       break ;
     case "ship_spawned":
       echo("new spawn");
-      ship.set({x:0,y:0,type:605, stats:88888888, crystals:720, shield: 1000});
+      ship.set({x:0,y:0,type:303, stats:88888888, crystals:719, shield: 1000});
       break ;
     case "ship_destroyed":
       echo("new death");
