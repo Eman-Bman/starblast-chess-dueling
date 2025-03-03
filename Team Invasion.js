@@ -103,34 +103,155 @@ this.options = {
   map_name: "Team Invasion"
 };
 
-let alienArray= new Array(40).fill(0);
+let alienArray= new Array(44).fill(0);
+let alienScore= [10,20,50,1000,30,60,120,0,1200,2500,0,0,50,0,0,0,80,80,80,0,1500,2500,0,0,40,75,120,1750,80,100,150,0,100,200,300,0,1000,2500,4000,0,5000,10000,0,0];
 let teamScores= [0,0];
-let alienRemain = new Array(40).fill(0);
+let alienRemain = new Array(44).fill(0);
+let alienCount=0;
+let alienLeft=434;
+
+var sendUI = function(ship, UI) {
+  if (ship !== null && typeof ship.setUIComponent == "function") {
+    if (UI.visible || UI.visible === null) ship.setUIComponent(UI);
+    else ship.setUIComponent({id: UI.id, position: [0,0,0,0], visible: false});
+  }
+};
+
+gameOver = function() {
+  for (var ship in game.ships) {
+    if (ship.team===teamScores.indexOf(Math.max(...teamScores))) {
+      ship.gameover();
+    }
+  }
+};
+
+this.tick = function(game) {
+  if (game.step>=3600 && game.step<14400 && game.step % 1200===0) {
+    game.addAlien({x:0,y:0,code:10,level:0});
+    alienCount=alienCount+1;
+  }
+  if (game.step>=14400 && game.step<21600 && game.step%1200===0) {
+    game.addAlien({x:0,y:0,code:11,level:0});
+    alienCount=alienCount+1;
+  }
+  if (game.step>=21600 && game.step<28800 && game.step%1200===0) {
+    game.addAlien({x:0,y:0,code:10,level:1});
+    alienCount=alienCount+1;
+  }
+  if (game.step>=28800 && game.step<36000 && game.step%1200===0) {
+    game.addAlien({x:0,y:0,code:17,level:1});
+    alienCount=alienCount+1;
+  }
+  if (game.step==36000) {
+    game.addAlien({x:0,y:0,code:19,level:0});
+    alienCount=alienCount+1;
+  }
+  if (game.step>=36000 && game.step<43200 && game.step%1200===0) {
+    game.addAlien({x:0,y:0,code:16,level:1});
+    alienCount=alienCount+1;
+  }
+  if (game.step>=43200 && game.step<50400 && game.step%1200===0) {
+    game.addAlien({x:0,y:0,code:18,level:1});
+    alienCount=alienCount+1;
+  }
+  if (game.step>=50400 && game.step<61200 && game.step%1200===0) {
+    game.addAlien({x:0,y:0,code:10,level:2});
+    alienCount=alienCount+1;
+  }
+  if (game.step>=61200 && game.step<72000 && game.step%600===0) {
+    game.addAlien({x:0,y:0,code:11,level:2});
+    alienCount=alienCount+1;
+  }
+  if (game.step==72000) {
+    game.addAlien({x:0,y:0,code:15,level:1});
+    game.addAlien({x:0,y:0,code:15,level:1});
+    alienCount=alienCount+2;
+  }
+  if (game.step==90000) {
+    game.addAlien({x:0,y:0,code:20,level:0});
+    alienCount=alienCount+1;
+  }
+  if (game.step>=90060 && game.aliens.length===0) {
+    gameOver();
+  }
+  if (game.step==108000) {
+    gameOver();
+  }
+};
 
 this.event = function(event,game) {
-  let alien=event.alien;
-  switch (event.name)
-    {
-    case "alien_destroyed":
-      if (alien.code==10 && alien.level==2){  
-        for (let i = 0; i < 2; i++) {
-          game.addAlien({x:alien.x,y:alien.y,code:10,level:1}); 
-        }
+let alien=event.alien;
+let ship=event.ship;
+switch (event.name)
+  {
+  case "alien_destroyed":
+    alienArray[alien.level+4*(alien.code-10)]=alienArray[alien.level+4*(alien.code-10)]+1;
+    teamScores[ship.team]=teamScores[ship.team]+alienScores[alien.level+4*(alien.code-10)];
+    if (alien.code==10 && alien.level==2){  
+      for (let i = 0; i < 2; i++) {
+        game.addAlien({x:alien.x,y:alien.y,code:10,level:1}); 
       }
-      if (alien.code==10 && alien.level==1){  
-        for (let i = 0; i < 2; i++) {
-          game.addAlien({x:alien.x,y:alien.y,code:10,level:0}); 
-        }
-      }
-      if (alien.code==11 && alien.level==2){  
-        for (let i = 0; i < 2; i++) {
-          game.addAlien({x:alien.x,y:alien.y,code:10,level:1}); 
-        }
-      }
-      if (alien.code==11 && alien.level==1){  
-        for (let i = 0; i < 2; i++) {
-          game.addAlien({x:alien.x,y:alien.y,code:10,level:0}); 
-        }
-      }
+      alienCount=alienCount+2;
     }
-  };
+    if (alien.code==10 && alien.level==1){  
+      for (let i = 0; i < 2; i++) {
+        game.addAlien({x:alien.x,y:alien.y,code:10,level:0}); 
+      }
+      alienCount=alienCount+2;
+    }
+    if (alien.code==11 && alien.level==2){  
+      for (let i = 0; i < 2; i++) {
+        game.addAlien({x:alien.x,y:alien.y,code:11,level:1}); 
+      }
+      alienCount=alienCount+2;
+    }
+    if (alien.code==11 && alien.level==1){  
+      for (let i = 0; i < 2; i++) {
+        game.addAlien({x:alien.x,y:alien.y,code:11,level:0}); 
+      }
+      alienCount=alienCount+2;
+    }
+    if (alien.code==17 && alien.level==1){  
+      for (let i = 0; i < 2; i++) {
+        game.addAlien({x:alien.x,y:alien.y,code:17,level:0});
+      }
+      alienCount=alienCount+2;
+    }
+    if (alien.code==16 && alien.level==1){  
+      for (let i = 0; i < 2; i++) {
+        game.addAlien({x:alien.x,y:alien.y,code:16,level:0}); 
+      }
+      alienCount=alienCount+2;
+    }
+    if (alien.code==15 && alien.level==1){  
+      for (let i = 0; i < 2; i++) {
+        game.addAlien({x:alien.x,y:alien.y,code:15,level:0}); 
+      }
+      alienCount=alienCount+2;
+    }
+    if (alien.code==15 && alien.level===0){  
+      for (let i = 0; i < 6; i++) {
+        game.addAlien({x:alien.x,y:alien.y,code:11,level:1}); 
+      }
+      alienCount=alienCount+6;
+    }
+    if (alien.code==19 && alien.level===0){  
+      for (let i = 0; i < 8; i++) {
+        game.addAlien({x:alien.x,y:alien.y,code:11,level:1}); 
+      }
+      alienCount=alienCount+8;
+    }
+    if (alien.code==19 && alien.level==1){  
+      for (let i = 0; i < 2; i++) {
+        game.addAlien({x:alien.x,y:alien.y,code:19,level:0}); 
+      }
+      alienCount=alienCount+2;
+    }
+    if (alien.code==20 && alien.level===0){  
+      for (let i = 0; i < 2; i++) {
+        game.addAlien({x:alien.x,y:alien.y,code:19,level:1}); 
+      }
+      alienCount=alienCount+2;
+    }
+  }
+};
